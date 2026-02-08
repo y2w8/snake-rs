@@ -35,10 +35,10 @@ impl App {
                         keycode: Some(keycode),
                         ..
                     } => match keycode {
-                        Keycode::W => self.game_context.move_up(),
-                        Keycode::A => self.game_context.move_left(),
-                        Keycode::S => self.game_context.move_down(),
-                        Keycode::D => self.game_context.move_right(),
+                        Keycode::W | Keycode::Up => self.game_context.move_up(),
+                        Keycode::A | Keycode::Left => self.game_context.move_left(),
+                        Keycode::S | Keycode::Down => self.game_context.move_down(),
+                        Keycode::D | Keycode::Right => self.game_context.move_right(),
                         Keycode::Escape => self.game_context.toggle_pause(),
                         _ => {}
                     },
