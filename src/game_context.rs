@@ -3,9 +3,11 @@ use rand::Rng;
 
 use crate::{renderer::Renderer};
 
+#[derive(Copy, Clone, PartialEq)]
 pub enum GameState {
     Playing,
     Paused,
+    Over,
 }
 
 #[derive(Copy, Clone, PartialEq)] // أضف هذي السطور
@@ -140,6 +142,11 @@ impl GameContext {
         self.state = match self.state {
             GameState::Playing => GameState::Paused,
             GameState::Paused => GameState::Playing,
+            _ => return,
         }
+    }
+
+    pub fn restart(&self) {
+        todo!()
     }
 }

@@ -3,7 +3,7 @@ use std::time::Duration;
 use sdl2::{event::Event, keyboard::Keycode};
 
 use crate::{
-    game_context::{GameContext},
+    game_context::{GameContext, GameState},
     renderer::Renderer,
 };
 
@@ -26,21 +26,27 @@ impl App {
         'running: loop {
             for event in event_pump.poll_iter() {
                 match event {
-                    Event::Quit { .. }
-                    | Event::KeyDown {
-                        keycode: Some(Keycode::Q),
-                        ..
-                    } => break 'running,
+                    Event::Quit { .. } => break 'running,
                     Event::KeyDown {
                         keycode: Some(keycode),
                         ..
-                    } => match keycode {
-                        Keycode::W | Keycode::Up => self.game_context.move_up(),
-                        Keycode::A | Keycode::Left => self.game_context.move_left(),
-                        Keycode::S | Keycode::Down => self.game_context.move_down(),
-                        Keycode::D | Keycode::Right => self.game_context.move_right(),
-                        Keycode::Escape => self.game_context.toggle_pause(),
-                        _ => {}
+                    } => match self.game_context.state {
+                        GameState::Playing => match keycode {
+                            Keycode::W | Keycode::Up => self.game_context.move_up(),
+                            Keycode::A | Keycode::Left => self.game_context.move_left(),
+                            Keycode::S | Keycode::Down => self.game_context.move_down(),
+                            Keycode::D | Keycode::Right => self.game_context.move_right(),
+                            Keycode::Escape => self.game_context.toggle_pause(),
+                            _ => {}
+                        },
+                        GameState::Paused => match keycode {
+                            Keycode::Q => break 'running,
+                            _ => {}
+                        },
+                        GameState::Over => match keycode {
+                            Keycode::R => self.game_context.restart(),
+                            _ => {}
+                        },
                     },
                     _ => {}
                 }

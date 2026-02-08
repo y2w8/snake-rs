@@ -58,6 +58,7 @@ impl Renderer {
         let bg_color = match game_context.state {
             GameState::Playing => Color::RGB(0, 0, 0),
             GameState::Paused => Color::RGB(30, 30, 30),
+            GameState::Over => Color::RGB(30, 30, 30),
         };
 
         self.canvas.set_draw_color(bg_color);
