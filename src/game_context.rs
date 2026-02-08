@@ -1,7 +1,7 @@
 use std::ops::Add;
 use rand::Rng;
 
-use crate::{game_context, renderer::Renderer};
+use crate::{renderer::Renderer};
 
 pub enum GameState {
     Playing,
