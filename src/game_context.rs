@@ -7,7 +7,16 @@ use crate::{renderer::Renderer};
 pub enum GameState {
     Playing,
     Paused,
-    Over,
+    GameOver,
+}
+
+#[derive(PartialEq, Clone, Copy)]
+pub enum GameEvent {
+    Resume,
+    Restart,
+    Quit,
+    FoodEaten,
+    Died,
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -46,17 +55,16 @@ impl GameContext {
         })
     }
 
-    pub fn next_tick(&mut self) {
+    pub fn next_tick(&mut self) -> Option<GameEvent> {
         if self.state != GameState::Playing {
-            return;
+            return None;
         }
 
         let back_position = *self.player_position.last().unwrap();
         let next_head_position = self.next_head_position(self.player_direction);
 
         if self.player_position.contains(&next_head_position) {
-            self.state = GameState::Over;
-            return;
+            return Some(GameEvent::Died);
         }
         self.player_position.insert(0, next_head_position);
 
@@ -66,9 +74,11 @@ impl GameContext {
             self.food.retain(|p| *p != next_head_position);
 
             self.generate_food();
+            return Some(GameEvent::FoodEaten);
         } else {
             self.player_position.pop();
         }
+        None
     }
 
     // Food
@@ -142,16 +152,7 @@ impl GameContext {
         }
     }
 
-    // Game State
-    pub fn toggle_pause(&mut self) {
-        self.state = match self.state {
-            GameState::Playing => GameState::Paused,
-            GameState::Paused => GameState::Playing,
-            _ => return,
-        }
-    }
-
-    pub fn restart(&self) {
-        todo!()
+    pub fn restart(&mut self) {
+        *self = Self::new().unwrap();
     }
 }

@@ -1,13 +1,14 @@
-use sdl2::{pixels::Color, rect::Rect};
+use sdl2::{pixels::Color, rect::Rect, ttf};
 
 use crate::{
     app::App,
-    game_context::{GameContext, GameState, Point},
+    game_context::{GameContext, GameState, Point}, ui_components::Ui,
 };
-
 
 pub struct Renderer {
     pub canvas: sdl2::render::Canvas<sdl2::video::Window>,
+    pub font: sdl2::ttf::Font<'static, 'static>,
+    pub ui: Ui,
 }
 
 impl Renderer {
@@ -15,8 +16,8 @@ impl Renderer {
     pub const GRID_Y_SIZE: u32 = 30;
     pub const DOT_SIZE_IN_PXS: u32 = 20;
 
-    pub fn new(app: &mut App) -> Result<Self, String> {
-        let video_subsystem: sdl2::VideoSubsystem = app.sdl.video()?;
+    pub fn new(sdl: &mut sdl2::Sdl) -> Result<Self, String> {
+        let video_subsystem: sdl2::VideoSubsystem = sdl.video()?;
         let window: sdl2::video::Window = video_subsystem
             .window(
                 "rust-sdl2 demo",
@@ -31,16 +32,50 @@ impl Renderer {
         let canvas: sdl2::render::Canvas<sdl2::video::Window> =
             window.clone().into_canvas().build().unwrap();
 
-        Ok(Self {
-            canvas,
-        })
+        let ttf = ttf::init().map_err(|e| e.to_string())?;
+        let ttf_leaked: &'static sdl2::ttf::Sdl2TtfContext = Box::leak(Box::new(ttf));
+
+        let font_data = include_bytes!("../assets/fonts/JetBrainsMonoNerdFont.ttf");
+
+        let font = ttf_leaked
+            .load_font_from_rwops(sdl2::rwops::RWops::from_bytes(font_data)?, 24)
+            .map_err(|e| e.to_string())?;
+
+        let ui: Ui = Ui::new();
+
+        Ok(Self { canvas, font, ui })
     }
 
-    pub fn draw(&mut self, app: &mut App) -> Result<(), String> {
-        self.draw_background(&app.game_context);
-        let _ = self.draw_player(&app.game_context);
-        let _ = self.draw_food(&app.game_context);
+    pub fn get_center(&mut self) -> (i32, i32) {
+        (((Renderer::GRID_X_SIZE * Renderer::DOT_SIZE_IN_PXS) / 2) as i32, ((Renderer::GRID_Y_SIZE * Renderer::DOT_SIZE_IN_PXS) / 2) as i32)
+    }
+
+    pub fn draw(&mut self, game_context: &GameContext) -> Result<(), String> {
+        self.draw_background(game_context)?;
+        self.draw_player(game_context)?;
+        self.draw_food(game_context)?;
+
+        for button in self.ui.buttons.iter_mut() {
+            button.draw(&mut self.canvas, &self.font)?;
+        }
+
+        for text in self.ui.texts.iter_mut() {
+            text.draw(&mut self.canvas, &self.font)?;
+        }
+
         self.canvas.present();
+        Ok(())
+    }
+
+    pub fn draw_background(&mut self, game_context: &GameContext) -> Result<(), String> {
+        let bg_color = match game_context.state {
+            GameState::Playing => Color::RGB(0, 0, 0),
+            GameState::Paused => Color::RGB(30, 30, 30),
+            GameState::GameOver => Color::RGB(30, 30, 30),
+        };
+
+        self.canvas.set_draw_color(bg_color);
+        self.canvas.clear();
         Ok(())
     }
 
@@ -52,17 +87,6 @@ impl Renderer {
             Self::DOT_SIZE_IN_PXS,
             Self::DOT_SIZE_IN_PXS,
         ))
-    }
-
-    pub fn draw_background(&mut self, game_context: &GameContext) {
-        let bg_color = match game_context.state {
-            GameState::Playing => Color::RGB(0, 0, 0),
-            GameState::Paused => Color::RGB(30, 30, 30),
-            GameState::Over => Color::RGB(30, 30, 30),
-        };
-
-        self.canvas.set_draw_color(bg_color);
-        self.canvas.clear();
     }
 
     pub fn draw_player(&mut self, game_context: &GameContext) -> Result<(), String> {

@@ -1,14 +1,14 @@
-use crate::{app::App, renderer::Renderer};
+use crate::app::App;
 
 mod app;
-mod renderer;
 mod game_context;
+mod renderer;
+mod ui_components;
 
 fn main() -> Result<(), String> {
     let mut app: App = App::new()?;
-    let mut renderer: Renderer = Renderer::new(&mut app)?;
 
-    app.run(&mut renderer);
+    app.run();
     println!("Hello, world!");
     Ok(())
 }
