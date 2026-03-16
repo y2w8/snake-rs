@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::ops::Add;
 
-use crate::renderer::Renderer;
+use crate::{renderer::Renderer};
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum GameState {
@@ -20,16 +20,6 @@ pub enum PlayerDirection {
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Point(pub i32, pub i32);
-
-impl Point {
-    pub fn random() -> Self {
-        let mut rng = rand::rng();
-        Point(
-            rng.random_range(0..Renderer::GRID_X_SIZE as i32),
-            rng.random_range(0..Renderer::GRID_X_SIZE as i32),
-        )
-    }
-}
 
 impl Add<Point> for Point {
     type Output = Point;
@@ -88,8 +78,11 @@ impl GameContext {
             .filter(|p| !self.player_position.contains(p) && !self.food.contains(p))
             .collect();
         let mut rng = rand::rng();
-        if empty_points.is_empty() { return };
-        self.food.push(empty_points[rng.random_range(0..empty_points.len() - 1)])
+        if empty_points.is_empty() {
+            return;
+        };
+        self.food
+            .push(empty_points[rng.random_range(0..empty_points.len() - 1)])
     }
 
     // Player
