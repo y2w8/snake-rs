@@ -94,39 +94,27 @@ impl GameContext {
 
     // Player
     pub fn move_up(&mut self) {
-        let next_head_position = self.next_head_position(PlayerDirection::Up);
-        if self.player_position.contains(&next_head_position) {
-            return;
+        if self.player_direction != PlayerDirection::Down {
+            self.player_direction = PlayerDirection::Up;
         }
-
-        self.player_direction = PlayerDirection::Up;
     }
 
     pub fn move_down(&mut self) {
-        let next_head_position = self.next_head_position(PlayerDirection::Down);
-        if self.player_position.contains(&next_head_position) {
-            return;
+        if self.player_direction != PlayerDirection::Up {
+            self.player_direction = PlayerDirection::Down;
         }
-
-        self.player_direction = PlayerDirection::Down;
     }
 
     pub fn move_right(&mut self) {
-        let next_head_position = self.next_head_position(PlayerDirection::Right);
-        if self.player_position.contains(&next_head_position) {
-            return;
+        if self.player_direction != PlayerDirection::Left {
+            self.player_direction = PlayerDirection::Right;
         }
-
-        self.player_direction = PlayerDirection::Right;
     }
 
     pub fn move_left(&mut self) {
-        let next_head_position = self.next_head_position(PlayerDirection::Left);
-        if self.player_position.contains(&next_head_position) {
-            return;
+        if self.player_direction != PlayerDirection::Right {
+            self.player_direction = PlayerDirection::Left;
         }
-
-        self.player_direction = PlayerDirection::Left;
     }
 
     pub fn next_head_position(&mut self, direction: PlayerDirection) -> Point {
