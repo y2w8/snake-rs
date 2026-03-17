@@ -70,17 +70,17 @@ impl App {
                             },
                             _ => {}
                         },
-                        GameState::Paused => match keycode {
-                            Keycode::Q => break 'running,
-                            _ => {}
-                        },
-                        GameState::GameOver => match keycode {
-                            Keycode::R => {
+                        GameState::Paused => {
+                            if keycode == Keycode::Q {
+                                break 'running;
+                            }
+                        }
+                        GameState::GameOver => {
+                            if keycode == Keycode::R {
                                 self.change_state(GameState::Playing);
                                 self.game_context.restart();
                             }
-                            _ => {}
-                        },
+                        }
                     },
                     _ => {}
                 }

@@ -10,7 +10,7 @@ pub struct Button {
     pub rect: Rect,
     pub color: Color,
     pub text: String,
-    pub event: GameEvent
+    pub event: GameEvent,
 }
 
 impl Button {
@@ -23,7 +23,11 @@ impl Button {
         }
     }
 
-    pub fn draw(&mut self, canvas: &mut Canvas<Window>, font: &ttf::Font<'static, 'static>) -> Result<(), String> {
+    pub fn draw(
+        &mut self,
+        canvas: &mut Canvas<Window>,
+        font: &ttf::Font<'static, 'static>,
+    ) -> Result<(), String> {
         canvas.set_draw_color(self.color);
         canvas.fill_rect(self.rect)?;
 

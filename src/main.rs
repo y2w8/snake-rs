@@ -3,7 +3,7 @@ use crate::app::App;
 mod app;
 mod game_context;
 mod renderer;
-mod ui_components;
+mod ui;
 
 fn main() -> Result<(), String> {
     let mut app: App = App::new()?;

@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::ops::Add;
 
-use crate::{renderer::Renderer};
+use crate::renderer::Renderer;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum GameState {

@@ -1,8 +1,8 @@
 use sdl2::{pixels::Color, rect::Rect, ttf};
 
 use crate::{
-    app::App,
-    game_context::{GameContext, GameState, Point}, ui_components::Ui,
+    game_context::{GameContext, GameState, Point},
+    ui::Ui,
 };
 
 pub struct Renderer {
@@ -47,7 +47,10 @@ impl Renderer {
     }
 
     pub fn get_center(&mut self) -> (i32, i32) {
-        (((Renderer::GRID_X_SIZE * Renderer::DOT_SIZE_IN_PXS) / 2) as i32, ((Renderer::GRID_Y_SIZE * Renderer::DOT_SIZE_IN_PXS) / 2) as i32)
+        (
+            ((Renderer::GRID_X_SIZE * Renderer::DOT_SIZE_IN_PXS) / 2) as i32,
+            ((Renderer::GRID_Y_SIZE * Renderer::DOT_SIZE_IN_PXS) / 2) as i32,
+        )
     }
 
     pub fn draw(&mut self, game_context: &GameContext) -> Result<(), String> {

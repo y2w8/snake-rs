@@ -1,6 +1,6 @@
-use sdl2::{pixels::Color, rect::Rect, ttf, video::Window, render::Canvas};
+use sdl2::{pixels::Color, rect::Rect, render::Canvas, ttf, video::Window};
 
-use crate::{game_context::Point};
+use crate::game_context::Point;
 
 pub struct Text {
     pub text: String,
@@ -17,7 +17,11 @@ impl Text {
         }
     }
 
-    pub fn draw(&mut self, canvas: &mut Canvas<Window>, font: &ttf::Font<'static, 'static>) -> Result<(), String> {
+    pub fn draw(
+        &mut self,
+        canvas: &mut Canvas<Window>,
+        font: &ttf::Font<'static, 'static>,
+    ) -> Result<(), String> {
         let surface = font
             .render(&self.text)
             .blended(self.color)
@@ -28,7 +32,12 @@ impl Text {
             .create_texture_from_surface(&surface)
             .map_err(|e| e.to_string())?;
 
-        let target = Rect::new(self.point.0, self.point.1, surface.width(), surface.height());
+        let target = Rect::new(
+            self.point.0,
+            self.point.1,
+            surface.width(),
+            surface.height(),
+        );
         canvas.copy(&texture, None, Some(target))?;
         Ok(())
     }
